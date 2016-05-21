@@ -37,17 +37,27 @@ namespace FlowerShop
         }
     }
     
+    /// <summary>
+    /// Product abstract
+    /// </summary>
     abstract class Flower
     {
-      public static int price { get; set; }
+      public int price { get; set; }//think over
     }
-    class Rose:Flower
+
+    /// <summary>
+    /// Concrete product
+    /// </summary>
+    class Rose :Flower
     {
         public Rose()
         {
             price = 200;
         }
     }
+    /// <summary>
+    /// Concrete product
+    /// </summary>
     class Peony:Flower
     {
         public Peony()
@@ -56,7 +66,10 @@ namespace FlowerShop
         }
     }
 
-    class Petunia:Flower
+    /// <summary>
+    /// Concrete product
+    /// </summary>
+    class Petunia :Flower
     {
         public Petunia()
         {
@@ -64,7 +77,9 @@ namespace FlowerShop
         }
     }
 
-    //
+    /// <summary>
+    /// Creator
+    /// </summary>
     abstract class Bouquet
     {
         private List<Flower> _flowers = new List<Flower>();
@@ -94,15 +109,18 @@ namespace FlowerShop
         {
             this.Count = memento.Count;
             this.Coast = memento.Coast;
-            //this.Flowers = memento.Flowers;
+            this.Flowers = memento.Flowers;
             Console.WriteLine("Was bougth: Flower{0} Count {1} Payed {2}",
                  Count, Coast, Flowers);
         }
 
+        //Factory method
         public abstract void CreateBouquet();
     }
 
-    
+    /// <summary>
+    /// Concrete creator
+    /// </summary>
     class RosesStandard:Bouquet
     {
         public RosesStandard(int c) : base(c)
@@ -114,6 +132,9 @@ namespace FlowerShop
 
        
     }
+    /// <summary>
+    /// Concrete creator
+    /// </summary>
     class PetuniasStandard:Bouquet
     {
         public PetuniasStandard(int c):base(c)
@@ -124,7 +145,9 @@ namespace FlowerShop
         }
         
     }
-
+    /// <summary>
+    /// Concrete creator
+    /// </summary>
     class Custom : Bouquet
     {
         public Custom(int c):base(c)
@@ -143,15 +166,16 @@ namespace FlowerShop
     {
         public int Count { get; private set; }
         public int Coast { get; private set; }
-        public int List<Flower> _flowers= new List<Flower>();//think over
+        //this need be abstract?=\
+        private int List<Flower> _flowers= new List<Flower>();//think over
         public List<Flower> Flowers
         {
             get { return _flowers; }
-        }*/
+        }
 
         public SalesCheck(int Count,int Coast,List<Flower> flowers)
         {
-            //this.Flowers = flowers;
+            this.Flowers = flowers;
             this.Coast = Coast;
             this.Count = Count;
         }
@@ -161,22 +185,13 @@ namespace FlowerShop
     /// </summary>
     class SaleHistory
     {
-        /*need dictionary
-        private SalesCheck _saleCheck;
-
-        public SalesCheck SaleCheck
-        {
-            set { _saleCheck = value; }
-            get { return _saleCheck; }
-        }*/
-
-        //smth like 
+        
         public int SId { get; private set; }
-        public Dictionary<int, SaleHistory> History = new Dictionary<int, SaleHistory>();
+        public Dictionary<int, SalesCheck> History = new Dictionary<int, SalesCheck>();
         public SaleHistory()
         {
-            History.Add(SId, SaleHistory);//think over what need contain here
-
+            History.Add(SId, SalesCheck);//think over what need contain here
+            SId++;
         }
     }
 }
