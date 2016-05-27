@@ -11,7 +11,10 @@ namespace FlowerShop
     {
         static void Main(string[] args)
         {
+            
             Bouquet[] bouquet = new Bouquet[3];
+            //save state to sales check
+            SaleHistory sale = new SaleHistory();
 
             bouquet[0] = new RosesStandard(2);
             bouquet[1] = new PetuniasStandard(4);
@@ -20,17 +23,17 @@ namespace FlowerShop
             foreach(Bouquet participants in bouquet)
             {
                 Console.WriteLine("\n" + bouquet.GetType().Name + "--"+
-                    " Price:"+Flower.price);
+                    " Price:"+participants.Coast);
                 foreach (Flower flower in participants.Flowers)
                 {
                     Console.WriteLine(" " + flower.GetType().Name +
-                        " Price:" + participants.Coast);
+                        " Price:" + flower.price);
+                    sale.History.Add(0,participants.SaveState());
                 }
             }
 
-            //save state to sales check
-            SaleHistory sale = new SaleHistory();
-            sale.History.Push(bouquet.SalesCheck());
+            
+            
 
             //wait
             Console.ReadKey();
@@ -42,7 +45,7 @@ namespace FlowerShop
     /// </summary>
     abstract class Flower
     {
-      public int price { get; set; }//think over
+      public int price { get; set; }
     }
 
     /// <summary>
@@ -82,29 +85,30 @@ namespace FlowerShop
     /// </summary>
     abstract class Bouquet
     {
-        private List<Flower> _flowers = new List<Flower>();
+        public List<Flower> _flowers = new List<Flower>();
+        public List<Flower> Flowers
+        {
+            get { return _flowers; }
+            private set { _flowers = value; }
+        }
         public int Coast { get; set; }
         public int Count { get; set; }
         public Bouquet(int c)
         {
             Count = c;
-            Coast = Flower.price * Count;
+            Coast = Flowers.Sum(flower => flower.price);
 
             this.CreateBouquet();
         }
 
-        public List<Flower> Flowers
-        {
-            get { return _flowers; }
-        }
-
+        
         //save state
         public SalesCheck SaveState()
         {
             Console.WriteLine("thx for bought. Spend: for Flower{0} Count{1} Pay{2}",Flowers, Count, Coast);
             return new SalesCheck(Coast, Count, Flowers);
         }
-        //restore state - i don't think this need inherited
+        
         public void RestoreState(SalesCheck memento)
         {
             this.Count = memento.Count;
@@ -166,12 +170,9 @@ namespace FlowerShop
     {
         public int Count { get; private set; }
         public int Coast { get; private set; }
-        //this need be abstract?=\
-        private int List<Flower> _flowers= new List<Flower>();//think over
-        public List<Flower> Flowers
-        {
-            get { return _flowers; }
-        }
+
+        public List<Flower> Flowers { get; private set; } = new List<Flower>();
+       
 
         public SalesCheck(int Count,int Coast,List<Flower> flowers)
         {
@@ -190,7 +191,7 @@ namespace FlowerShop
         public Dictionary<int, SalesCheck> History = new Dictionary<int, SalesCheck>();
         public SaleHistory()
         {
-            History.Add(SId, SalesCheck);//think over what need contain here
+            History = new Dictionary<int, SalesCheck>();
             SId++;
         }
     }
