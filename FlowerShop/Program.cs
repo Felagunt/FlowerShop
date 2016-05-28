@@ -41,63 +41,52 @@ namespace FlowerShop
     }
     
     /// <summary>
-    /// Product abstract
+    /// Flower class
     /// </summary>
-    abstract class Flower
+    public class Flower
     {
-      public int price { get; set; }
-    }
-
-    /// <summary>
-    /// Concrete product
-    /// </summary>
-    class Rose :Flower
-    {
-        public Rose()
+        public decimal price;
+        Dictionary<string, decimal> flowers = new Dictionary<string, decimal>()
         {
-            price = 200;
-        }
-    }
-    /// <summary>
-    /// Concrete product
-    /// </summary>
-    class Peony:Flower
-    {
-        public Peony()
+            ["rose"] = 200m,
+            ["peony"] = 100m,
+            ["petunia"] = 132m
+        };
+        public Flower CreateFlower(string nameFlower)
         {
-            price = 100;
+            decimal price;
+            if (flowers.TryGetValue(nameFlower, out price))
+                return new Flower()
+                {
+                    price = price
+                };
+        return null;
         }
     }
 
-    /// <summary>
-    /// Concrete product
-    /// </summary>
-    class Petunia :Flower
-    {
-        public Petunia()
-        {
-            price = 132;
-        }
-    }
+    
 
     /// <summary>
     /// Creator
     /// </summary>
     abstract class Bouquet
     {
-        public List<Flower> _flowers = new List<Flower>();
+        /*public List<Flower> _flowers = new List<Flower>();
         public List<Flower> Flowers
         {
             get { return _flowers; }
             private set { _flowers = value; }
-        }
-        public int Coast { get; set; }
+        }*/
+        Flower flowers = new Flower();
+        public decimal Coast { get; set; }
         public int Count { get; set; }
         public Bouquet(int c)
         {
             Count = c;
-            Coast = Flowers.Sum(flower => flower.price);
-
+            foreach (var flower in flowers)
+                Coast += flower.price;
+            flowers.CreateFlower("rose");
+            Coast = flowers.price;
             this.CreateBouquet();
         }
 
@@ -106,7 +95,7 @@ namespace FlowerShop
         public SalesCheck SaveState()
         {
             Console.WriteLine("thx for bought. Spend: for Flower{0} Count{1} Pay{2}",Flowers, Count, Coast);
-            return new SalesCheck(Coast, Count, Flowers);
+            return new SalesCheck(Convert.ToInt32(Coast), Count, Flowers);
         }
         
         public void RestoreState(SalesCheck memento)
@@ -128,10 +117,13 @@ namespace FlowerShop
     class RosesStandard:Bouquet
     {
         public RosesStandard(int c) : base(c)
-        { }
+        {
+            Count = c;
+        }
         public override void CreateBouquet()
         {
-            Flowers.Add(new Rose());
+            
+            //flowers.CreateFlower("rose");
         }
 
        
@@ -145,7 +137,7 @@ namespace FlowerShop
         { }
         public override void CreateBouquet()
         {
-            Flowers.Add(new Petunia());
+            //Flowers.Add(new Petunia());
         }
         
     }
@@ -158,8 +150,8 @@ namespace FlowerShop
         { }
         public override void CreateBouquet()
         {
-            Flowers.Add(new Rose());
-            Flowers.Add(new Peony());
+            //Flowers.Add(new Rose());
+            //Flowers.Add(new Peony());
         }
         
     }
@@ -169,12 +161,12 @@ namespace FlowerShop
     class SalesCheck
     {
         public int Count { get; private set; }
-        public int Coast { get; private set; }
+        public decimal Coast { get; private set; }
 
         public List<Flower> Flowers { get; private set; } = new List<Flower>();
        
 
-        public SalesCheck(int Count,int Coast,List<Flower> flowers)
+        public SalesCheck(int Count,decimal Coast,List<Flower> flowers)
         {
             this.Flowers = flowers;
             this.Coast = Coast;
