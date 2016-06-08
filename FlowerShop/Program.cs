@@ -16,19 +16,19 @@ namespace FlowerShop
             //save state to sales check
             SaleHistory sale = new SaleHistory();
 
-            bouquet[0] = new RosesStandard(2);
+            bouquet[0] = new RosesStandard();
             bouquet[1] = new PetuniasStandard(4);
             bouquet[2] = new Custom(3);
             //display participants of bouguet
             foreach(Bouquet participants in bouquet)
             {
                 Console.WriteLine("\n" + bouquet.GetType().Name + "--"+
-                    " Price:"+participants.Coast);
+                    " Price:"+participants.Cost);
                 foreach (Flower flower in participants.Flowers)
                 {
-                    Console.WriteLine(" " + flower.GetType().Name +
+                    Console.WriteLine(" " + flower +
                         " Price:" + flower.price);
-                    sale.History.Add(0,participants.SaveState());
+                    //sale.History.Add(0,participants.SaveState());
                 }
             }
 
@@ -41,72 +41,89 @@ namespace FlowerShop
     }
     
     /// <summary>
-    /// Flower class
+    /// Flower abstract class
     /// </summary>
     public class Flower
     {
-        public decimal price;
-        Dictionary<string, decimal> flowers = new Dictionary<string, decimal>()
-        {
-            ["rose"] = 200m,
-            ["peony"] = 100m,
-            ["petunia"] = 132m
-        };
-        public Flower CreateFlower(string nameFlower)
-        {
-            decimal price;
-            if (flowers.TryGetValue(nameFlower, out price))
-                return new Flower()
-                {
-                    price = price
-                };
-        return null;
-        }
+        public decimal Price { get; set; }
+        
     }
 
-    
+    ///<summary>
+    /// concrete flower
+    /// </summary>
+    class Peony:Flower
+    {
+        public Peony()
+        {
+            Price = 100;
+        }
+    }
+    ///<summary>
+    /// concrete flower
+    /// </summary>
+    class Rose : Flower
+    {
+        public Rose()
+        {
+            Price = 200;
+        }
+    }
+    ///<summary>
+    /// concrete flower
+    /// </summary>
+    class Petunia : Flower
+    {
+        public Petunia()
+        {
+            Price = 132;
+        }
+    }
 
     /// <summary>
     /// Creator
     /// </summary>
     abstract class Bouquet
     {
-        /*public List<Flower> _flowers = new List<Flower>();
+        private List<Flower> _flowers = new List<Flower>();
         public List<Flower> Flowers
         {
             get { return _flowers; }
             private set { _flowers = value; }
-        }*/
-        Flower flowers = new Flower();
-        public decimal Coast { get; set; }
-        public int Count { get; set; }
-        public Bouquet(int c)
+        }
+        //Flower flowers = new Flower();
+        public decimal Cost
         {
-            Count = c;
-            foreach (var flower in flowers)
-                Coast += flower.price;
-            flowers.CreateFlower("rose");
-            Coast = flowers.price;
-            this.CreateBouquet();
+            get { return _flowers.Sum(p => p.Price); }
+            }
+        public int Count { get { return _flowers.Count(); } }
+        public Bouquet()
+        {
+            /*this.Count = c;
+            for (int i = 0; i < Count; i++)
+            {
+                Cost = Flowers.Sum(flower => flower.price);
+            }*/
+            //this.CreateBouquet();
         }
 
-        
+        /*
         //save state
         public SalesCheck SaveState()
         {
-            Console.WriteLine("thx for bought. Spend: for Flower{0} Count{1} Pay{2}",Flowers, Count, Coast);
-            return new SalesCheck(Convert.ToInt32(Coast), Count, Flowers);
+            Console.WriteLine("thx for bought. Spend: for Flower{0} Count{1} Pay{2}",Flowers, Count, Cost);
+            return new SalesCheck(Cost, Count, Flowers);
         }
         
         public void RestoreState(SalesCheck memento)
         {
             this.Count = memento.Count;
-            this.Coast = memento.Coast;
+            this.Cost = memento.Cost;
             this.Flowers = memento.Flowers;
             Console.WriteLine("Was bougth: Flower{0} Count {1} Payed {2}",
-                 Count, Coast, Flowers);
+                 Count, Cost, Flowers);
         }
-
+        */
         //Factory method
         public abstract void CreateBouquet();
     }
@@ -116,14 +133,13 @@ namespace FlowerShop
     /// </summary>
     class RosesStandard:Bouquet
     {
-        public RosesStandard(int c) : base(c)
+        public RosesStandard()
         {
-            Count = c;
+           
         }
         public override void CreateBouquet()
         {
-            
-            //flowers.CreateFlower("rose");
+            Flowers.Add(new Rose());
         }
 
        
@@ -133,11 +149,11 @@ namespace FlowerShop
     /// </summary>
     class PetuniasStandard:Bouquet
     {
-        public PetuniasStandard(int c):base(c)
+        public PetuniasStandard()
         { }
         public override void CreateBouquet()
         {
-            //Flowers.Add(new Petunia());
+            Flowers.Add(new Petunia());
         }
         
     }
@@ -146,12 +162,12 @@ namespace FlowerShop
     /// </summary>
     class Custom : Bouquet
     {
-        public Custom(int c):base(c)
+        public Custom()
         { }
         public override void CreateBouquet()
         {
-            //Flowers.Add(new Rose());
-            //Flowers.Add(new Peony());
+            Flowers.Add(new Rose());
+            Flowers.Add(new Peony());
         }
         
     }
@@ -161,15 +177,15 @@ namespace FlowerShop
     class SalesCheck
     {
         public int Count { get; private set; }
-        public decimal Coast { get; private set; }
+        public decimal Cost { get; private set; }
 
         public List<Flower> Flowers { get; private set; } = new List<Flower>();
        
 
-        public SalesCheck(int Count,decimal Coast,List<Flower> flowers)
+        public SalesCheck(int Count,decimal Cost,List<Flower> flowers)
         {
             this.Flowers = flowers;
-            this.Coast = Coast;
+            this.Cost = Cost;
             this.Count = Count;
         }
     }
